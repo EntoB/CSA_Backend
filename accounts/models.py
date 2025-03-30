@@ -2,8 +2,9 @@ from django.db import models
 from django.utils.timezone import now, timedelta
 
 class User(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
+    id = models.AutoField(primary_key=True,auto_created=True)
+    name = models.CharField(max_length=100,null=True,blank=True)
+    password = models.CharField(max_length=20,null=True,blank=True)
     role = models.CharField(max_length=20, choices=[('superadmin', 'SuperAdmin'), ('admin', 'Admin'), ('customer', 'Customer')])
 
 class RegistrationKey(models.Model):

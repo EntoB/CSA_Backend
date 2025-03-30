@@ -10,25 +10,24 @@ from .models import User, RegistrationKey
 def generate_random_key():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=20))
 
-# Generate customer key - accessible by admins and superadmins
+# Generate customer key - accessible by superadmins
 def generate_customer_key(request):
-    if request.method == 'GET':
-        # Assuming the logged-in user's role is in request.user.role
-        # if request.user.role not in ['admin', 'superadmin']:
-        #     return JsonResponse({'error': 'Unauthorized access'}, status=403)
-
+    if request.method == 'POST':
+        if request.user.role != 'superadmin':
+            return JsonResponse({'error': 'Unauthorized access'}, status=403)
+        
         key = generate_random_key()
-        RegistrationKey.objects.create(key=key, for_role='customer')
+        RegistrationKey.objects.create(key=key, for_role='customer') #dont forget to delete them after they are expired
         return JsonResponse({'customer_registration_key': key})
 
 # Generate admin key - accessible by superadmins only
 def generate_admin_key(request):
-    if request.method == 'POST':
-        if request.user.role != 'superadmin':
-            return JsonResponse({'error': 'Unauthorized access'}, status=403)
+    if request.method == 'GET':
+        # if request.user.role != 'superadmin':
+        #     return JsonResponse({'error': 'Unauthorized access'}, status=403)
 
         key = generate_random_key()
-        RegistrationKey.objects.create(key=key, role='admin')
+        RegistrationKey.objects.create(key=key, for_role='admin')
         return JsonResponse({'admin_registration_key': key})
 
 
@@ -45,9 +44,10 @@ def register_user(request):
                 return JsonResponse({'error': 'Key has expired'}, status=400)
 
             # Create user
-            user = User.objects.create_user(username=name, password=password, role=registration_key.role)
+            user = User.objects.create(name=name, password=password, role=registration_key.for_role)
             registration_key.delete()  # Invalidate the key after use
             return JsonResponse({'message': 'User registered successfully', 'role': user.role})
+        #make sure the responses are appropriate after the frontend is done
         except RegistrationKey.DoesNotExist:
             return JsonResponse({'error': 'Invalid registration key'}, status=400)
 
