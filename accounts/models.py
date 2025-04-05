@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     id = models.AutoField(primary_key=True,auto_created=True)
-    name = models.CharField(max_length=100,null=True,blank=True)
+    phone_number = models.CharField(max_length=15,null=True,blank=True)
     #the name should be phone number staying as CharField validate in frontend with RegEx
     role = models.CharField(max_length=20, choices=[('superadmin', 'SuperAdmin'), ('admin', 'Admin'), ('customer', 'Customer')])
 

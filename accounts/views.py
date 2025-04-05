@@ -1,19 +1,16 @@
-import random
-import string
 from django.http import JsonResponse
 from django.utils.timezone import now
 from django.contrib.auth import authenticate, login as auth_login
 from .models import User, RegistrationKey
 from django.contrib.auth.hashers import make_password
 
-# Helper function to generate a random key
-def generate_random_key():
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=20))
+from accounts.helpers.utils import generate_random_key
+
 
 # Generate customer key - accessible by superadmins
 def generate_customer_key(request):
     if request.method == 'POST':
-        if request.user.role != 'superadmin':
+        if request.user.role != 'superadmin': #adminum mechal alebet
             return JsonResponse({'error': 'Unauthorized access'}, status=403)
         
         key = generate_random_key()
@@ -35,8 +32,9 @@ def generate_admin_key(request):
 def register_user(request):
     if request.method == 'POST':
         key = request.POST.get('registration_key')
-        name = request.POST.get('username')
+        username = request.POST.get('username')
         password = request.POST.get('password')
+        phone_number = request.POST.get('phone_number')
 
         try:
             registration_key = RegistrationKey.objects.get(key=key)
@@ -44,7 +42,7 @@ def register_user(request):
                 return JsonResponse({'error': 'Key has expired'}, status=400)
 
             # Create user
-            user = User.objects.create(username=name, password=make_password(password), role=registration_key.for_role)
+            user = User.objects.create(username=username,phone_number = phone_number, password=make_password(password), role=registration_key.for_role)
             registration_key.delete()  # Invalidate the key after use
             return JsonResponse({'message': 'User registered successfully', 'role': user.role})
         #make sure the responses are appropriate after the frontend is done
@@ -54,10 +52,10 @@ def register_user(request):
 # User login
 def login_user(request):
     if request.method == 'POST':
-        name = request.POST.get('username')
+        username = request.POST.get('username')
         password = request.POST.get('password')
 
-        user = authenticate(username=name, password=password)
+        user = authenticate(username=username, password=password)
         if user:
             auth_login(request, user)
             return JsonResponse({'message': 'Login successful', 'role': user.role})
