@@ -6,4 +6,6 @@ urlpatterns = [
     path('generate-customer-key/', views.generate_customer_key, name='generate_customer_key'),
     path('register/', views.register_user, name='register_user'),
     path('login/', views.login_user, name='login_user'),
-]
+    path('set-status/', views.set_status, name='set_status'),
+    path('delete-user/', views.delete_user, name='delete_user'),
+]#add view admins and view customers
