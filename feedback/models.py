@@ -15,7 +15,7 @@ class Service(models.Model):
 
 class Feedback(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='feedbacks')
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='feedbacks')  # Link to Service
+    # service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='feedbacks',default=1)  # Link to Service
     message = models.TextField()
     sentiment = models.CharField(max_length=10, choices=[('positive', 'Positive'), ('neutral', 'Neutral'), ('negative', 'Negative')], default='neutral')
     created_at = models.DateTimeField(auto_now_add=True)
