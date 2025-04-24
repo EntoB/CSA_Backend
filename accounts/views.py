@@ -59,11 +59,13 @@ def register_user(request):
             return JsonResponse({'error': 'Invalid registration key'}, status=400)
 
 # User login
+from django.http import JsonResponse
+
 def login_user(request):
     if request.method == 'POST':
         data, error = parse_json_request(request)
         if error:
-            return error  # Return error response if JSON parsing fails
+            return error
 
         username = data.get('username')
         password = data.get('password')
@@ -77,6 +79,8 @@ def login_user(request):
                 return JsonResponse({'error': 'Account is deactivated. Please contact support.'}, status=403)
         else:
             return JsonResponse({'error': 'Invalid username or password'}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # Set user status (activate/deactivate) - accessible by superadmins only
 def set_status(request):

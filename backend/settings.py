@@ -28,9 +28,16 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
+    # "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    # "http://localhost:5173",  # Add your React frontend's URL
+    "http://127.0.0.1:5173"
+]
+
+CORS_ALLOW_CREDENTIALS = True  # Allow cookies to be sent
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,7 +54,7 @@ INSTALLED_APPS = [
 
 # Custom user model
 AUTH_USER_MODEL = 'accounts.User'
-
+# LOGIN_URL = '/accounts/login/'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
